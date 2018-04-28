@@ -1,0 +1,195 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.ijpay:IJPay-Demo:war:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.systemPath' for com.alibaba:alipay-sdk-java:jar should not point at files within the project directory, ${project.basedir}/libs/alipay-sdk-java20171012102412.jar will be unresolvable by dependent projects @ line 86, column 16
+[WARNING] 'dependencies.dependency.systemPath' for com.unionpay:unionpay-sdk-java:jar should not point at files within the project directory, ${project.basedir}/libs/bcprov-jdk15on-1.54.jar will be unresolvable by dependent projects @ line 94, column 16
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.mybatis.spring.boot:mybatis-spring-boot-starter:jar -> version 1.3.1 vs 1.3.0 @ line 141, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+Downloading: http://repo1.maven.org/maven2/org/jooq/jooq-codegen-maven/3.9.4/jooq-codegen-maven-3.9.4.pom
+1/3 KB   3/3 KB            Downloaded: http://repo1.maven.org/maven2/org/jooq/jooq-codegen-maven/3.9.4/jooq-codegen-maven-3.9.4.pom (3 KB at 3.3 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/jooq/jooq-parent/3.9.4/jooq-parent-3.9.4.pom
+4/10 KB   6/10 KB   10/10 KB   10/10 KB              Downloaded: http://repo1.maven.org/maven2/org/jooq/jooq-parent/3.9.4/jooq-parent-3.9.4.pom (10 KB at 16.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/jooq/jooq-codegen-maven/3.9.4/jooq-codegen-maven-3.9.4.jar
+1/16 KB    3/16 KB   6/16 KB   8/16 KB   10/16 KB   11/16 KB   13/16 KB   14/16 KB   16/16 KB              Downloaded: http://repo1.maven.org/maven2/org/jooq/jooq-codegen-maven/3.9.4/jooq-codegen-maven-3.9.4.jar (16 KB at 22.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/1.8/maven-antrun-plugin-1.8.pom
+3/4 KB     4/4 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/1.8/maven-antrun-plugin-1.8.pom (4 KB at 6.8 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/1.8/maven-antrun-plugin-1.8.jar
+2/36 KB   5/36 KB   6/36 KB   8/36 KB   9/36 KB   12/36 KB   15/36 KB   16/36 KB   17/36 KB   19/36 KB   20/36 KB   22/36 KB   23/36 KB   24/36 KB   26/36 KB   29/36 KB   30/36 KB   31/36 KB   35/36 KB   36/36 KB   36/36 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-antrun-plugin/1.8/maven-antrun-plugin-1.8.jar (36 KB at 51.6 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/2.6/maven-assembly-plugin-2.6.pom
+1/17 KB    5/17 KB   6/17 KB   7/17 KB   10/17 KB   11/17 KB   13/17 KB   14/17 KB   15/17 KB   17/17 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/2.6/maven-assembly-plugin-2.6.pom (17 KB at 33.0 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/2.6/maven-assembly-plugin-2.6.jar
+1/240 KB   5/240 KB   9/240 KB   11/240 KB   13/240 KB   14/240 KB   15/240 KB   17/240 KB   18/240 KB   20/240 KB   21/240 KB   22/240 KB   25/240 KB   27/240 KB   31/240 KB   31/240 KB   34/240 KB   35/240 KB   37/240 KB   38/240 KB   39/240 KB   41/240 KB   42/240 KB   44/240 KB   45/240 KB   46/240 KB   48/240 KB   49/240 KB   51/240 KB   53/240 KB   55/240 KB   56/240 KB   58/240 KB   59/240 KB   60/240 KB   62/240 KB   63/240 KB   64/240 KB   65/240 KB   69/240 KB   70/240 KB   71/240 KB   72/240 KB   73/240 KB   76/240 KB   79/240 KB   80/240 KB   82/240 KB   83/240 KB   87/240 KB   87/240 KB   89/240 KB   90/240 KB   93/240 KB   96/240 KB   98/240 KB   101/240 KB   103/240 KB   104/240 KB   105/240 KB   109/240 KB   110/240 KB   111/240 KB   112/240 KB   115/240 KB   117/240 KB   118/240 KB   120/240 KB   121/240 KB   122/240 KB   124/240 KB   125/240 KB   126/240 KB   128/240 KB   128/240 KB   130/240 KB   134/240 KB   135/240 KB   136/240 KB   138/240 KB   141/240 KB   142/240 KB   143/240 KB   146/240 KB   148/240 KB   149/240 KB   150/240 KB   152/240 KB   153/240 KB   155/240 KB   156/240 KB   157/240 KB   159/240 KB   160/240 KB   162/240 KB   163/240 KB   166/240 KB   167/240 KB   171/240 KB   174/240 KB   177/240 KB   180/240 KB   181/240 KB   183/240 KB   184/240 KB   186/240 KB   187/240 KB   188/240 KB   190/240 KB   191/240 KB   193/240 KB   197/240 KB   197/240 KB   200/240 KB   201/240 KB   202/240 KB   204/240 KB   205/240 KB   207/240 KB   208/240 KB   210/240 KB   211/240 KB   212/240 KB   214/240 KB   215/240 KB   217/240 KB   218/240 KB   219/240 KB   221/240 KB   222/240 KB   224/240 KB   225/240 KB   226/240 KB   228/240 KB   229/240 KB   231/240 KB   232/240 KB   233/240 KB   235/240 KB   236/240 KB   238/240 KB   239/240 KB   240/240 KB                Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-assembly-plugin/2.6/maven-assembly-plugin-2.6.jar (240 KB at 191.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-dependency-plugin/2.10/maven-dependency-plugin-2.10.pom
+1/12 KB      5/12 KB   7/12 KB   8/12 KB   11/12 KB   12/12 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-dependency-plugin/2.10/maven-dependency-plugin-2.10.pom (12 KB at 25.1 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-dependency-plugin/2.10/maven-dependency-plugin-2.10.jar
+2/157 KB   3/157 KB   5/157 KB   6/157 KB   10/157 KB   10/157 KB   12/157 KB   13/157 KB   15/157 KB   16/157 KB   17/157 KB   19/157 KB   20/157 KB   22/157 KB   23/157 KB   24/157 KB   26/157 KB   27/157 KB   29/157 KB   30/157 KB   31/157 KB   33/157 KB   34/157 KB   36/157 KB   37/157 KB   38/157 KB   40/157 KB   41/157 KB   43/157 KB   44/157 KB   45/157 KB   47/157 KB   48/157 KB   50/157 KB   51/157 KB   53/157 KB   54/157 KB   55/157 KB   57/157 KB   58/157 KB   60/157 KB   61/157 KB   62/157 KB   64/157 KB   65/157 KB   67/157 KB   68/157 KB   69/157 KB   71/157 KB   72/157 KB   74/157 KB   75/157 KB   76/157 KB   79/157 KB   81/157 KB   82/157 KB   85/157 KB   86/157 KB   88/157 KB   89/157 KB   90/157 KB   92/157 KB   93/157 KB   96/157 KB   99/157 KB   102/157 KB   105/157 KB   107/157 KB   109/157 KB   110/157 KB   113/157 KB   114/157 KB   116/157 KB   120/157 KB   120/157 KB   121/157 KB   123/157 KB   126/157 KB   128/157 KB   131/157 KB   134/157 KB   137/157 KB   138/157 KB   140/157 KB   141/157 KB   143/157 KB   144/157 KB   145/157 KB   147/157 KB   148/157 KB   151/157 KB   152/157 KB   154/157 KB   155/157 KB   157/157 KB   157/157 KB                Downloaded: http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-dependency-plugin/2.10/maven-dependency-plugin-2.10.jar (157 KB at 188.6 KB/sec)
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building IJPay-Demo 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[WARNING] The POM for com.github.javen205:IJPay:jar:1.1.3 is invalid, transitive dependencies (if any) will not be available, enable debug logging for more details
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.10:tree (default-cli) @ IJPay-Demo ---
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/reporting/maven-reporting-impl/2.2/maven-reporting-impl-2.2.pom
+1/5 KB       5/5 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/reporting/maven-reporting-impl/2.2/maven-reporting-impl-2.2.pom (5 KB at 9.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-sink-api/1.2/doxia-sink-api-1.2.pom
+2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-sink-api/1.2/doxia-sink-api-1.2.pom (2 KB at 3.1 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia/1.2/doxia-1.2.pom
+1/19 KB   5/19 KB   8/19 KB   10/19 KB   11/19 KB   13/19 KB   14/19 KB   15/19 KB   17/19 KB   19/19 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia/1.2/doxia-1.2.pom (19 KB at 38.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-logging-api/1.2/doxia-logging-api-1.2.pom
+1/2 KB     2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-logging-api/1.2/doxia-logging-api-1.2.pom (2 KB at 3.2 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-core/1.2/doxia-core-1.2.pom
+1/4 KB   4/4 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-core/1.2/doxia-core-1.2.pom (4 KB at 8.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-site-renderer/1.2/doxia-site-renderer-1.2.pom
+4/7 KB   7/7 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-site-renderer/1.2/doxia-site-renderer-1.2.pom (7 KB at 12.2 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-sitetools/1.2/doxia-sitetools-1.2.pom
+1/16 KB   5/16 KB   7/16 KB   8/16 KB   11/16 KB   13/16 KB   14/16 KB   16/16 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-sitetools/1.2/doxia-sitetools-1.2.pom (16 KB at 32.4 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-decoration-model/1.2/doxia-decoration-model-1.2.pom
+1/3 KB     3/3 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-decoration-model/1.2/doxia-decoration-model-1.2.pom (3 KB at 3.7 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-module-xhtml/1.2/doxia-module-xhtml-1.2.pom
+2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-module-xhtml/1.2/doxia-module-xhtml-1.2.pom (2 KB at 3.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-modules/1.2/doxia-modules-1.2.pom
+3/3 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-modules/1.2/doxia-modules-1.2.pom (3 KB at 5.2 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-module-fml/1.2/doxia-module-fml-1.2.pom
+4/6 KB   6/6 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-module-fml/1.2/doxia-module-fml-1.2.pom (6 KB at 11.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-analyzer/1.6/maven-dependency-analyzer-1.6.pom
+1/6 KB   5/6 KB   6/6 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-analyzer/1.6/maven-dependency-analyzer-1.6.pom (6 KB at 11.0 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.2/asm-5.0.2.pom
+1/2 KB   2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.2/asm-5.0.2.pom (2 KB at 4.1 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/ow2/asm/asm-parent/5.0.2/asm-parent-5.0.2.pom
+1/6 KB   5/6 KB   6/6 KB   6/6 KB            Downloaded: http://repo1.maven.org/maven2/org/ow2/asm/asm-parent/5.0.2/asm-parent-5.0.2.pom (6 KB at 12.1 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-project/2.0.5/maven-project-2.0.5.pom
+1/2 KB   2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-project/2.0.5/maven-project-2.0.5.pom (2 KB at 3.6 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven/2.0.5/maven-2.0.5.pom
+1/6 KB   5/6 KB   6/6 KB   6/6 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven/2.0.5/maven-2.0.5.pom (6 KB at 12.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-settings/2.0.5/maven-settings-2.0.5.pom
+2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-settings/2.0.5/maven-settings-2.0.5.pom (2 KB at 3.4 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-model/2.0.5/maven-model-2.0.5.pom
+1/3 KB   3/3 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-model/2.0.5/maven-model-2.0.5.pom (3 KB at 5.8 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-profile/2.0.5/maven-profile-2.0.5.pom
+2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-profile/2.0.5/maven-profile-2.0.5.pom (2 KB at 3.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-artifact-manager/2.0.5/maven-artifact-manager-2.0.5.pom
+1/2 KB   2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-artifact-manager/2.0.5/maven-artifact-manager-2.0.5.pom (2 KB at 4.0 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-repository-metadata/2.0.5/maven-repository-metadata-2.0.5.pom
+2/2 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-repository-metadata/2.0.5/maven-repository-metadata-2.0.5.pom (2 KB at 3.0 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/maven-artifact/2.0.5/maven-artifact-2.0.5.pom
+727/727 B               Downloaded: http://repo1.maven.org/maven2/org/apache/maven/maven-artifact/2.0.5/maven-artifact-2.0.5.pom (727 B at 1.5 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-tree/2.2/maven-dependency-tree-2.2.pom
+3/8 KB      7/8 KB   8/8 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-tree/2.2/maven-dependency-tree-2.2.pom (8 KB at 14.3 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-invoker/2.1.1/maven-invoker-2.1.1.pom
+4/6 KB   6/6 KB            Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-invoker/2.1.1/maven-invoker-2.1.1.pom (6 KB at 11.6 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/reporting/maven-reporting-impl/2.2/maven-reporting-impl-2.2.jar
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-core/1.2/doxia-core-1.2.jar
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-analyzer/1.6/maven-dependency-analyzer-1.6.jar
+Downloading: http://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.2/asm-5.0.2.jar
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-tree/2.2/maven-dependency-tree-2.2.jar
+1/17 KB   5/17 KB   8/17 KB   10/17 KB   11/17 KB   13/17 KB   14/17 KB   15/17 KB   17/17 KB   17/17 KB   4/63 KB   17/17 KB   6/63 KB   17/17 KB   10/63 KB   17/17 KB   14/63 KB   17/17 KB   14/63 KB   17/17 KB   14/63 KB   17/17 KB   3/52 KB   14/63 KB   17/17 KB   7/52 KB   14/63 KB   17/17 KB   8/52 KB   14/63 KB   17/17 KB   12/52 KB   14/63 KB   17/17 KB   13/52 KB                                    Downloaded: http://repo1.maven.org/maven2/org/apache/maven/reporting/maven-reporting-impl/2.2/maven-reporting-impl-2.2.jar (17 KB at 31.9 KB/sec)
+Downloading: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-invoker/2.1.1/maven-invoker-2.1.1.jar
+14/63 KB   3/151 KB   13/52 KB   14/63 KB   7/151 KB   13/52 KB   14/63 KB   11/151 KB   13/52 KB   14/63 KB   13/151 KB   13/52 KB   15/63 KB   13/151 KB   13/52 KB   17/63 KB   13/151 KB   13/52 KB   18/63 KB   13/151 KB   13/52 KB   18/63 KB   13/151 KB   15/52 KB   18/63 KB   13/151 KB   19/52 KB   18/63 KB   13/151 KB   19/52 KB   21/63 KB   13/151 KB   19/52 KB   22/63 KB   13/151 KB   19/52 KB   24/63 KB   13/151 KB   19/52 KB   24/63 KB   13/151 KB   22/52 KB   27/63 KB   13/151 KB   22/52 KB   27/63 KB   13/151 KB   23/52 KB   27/63 KB   13/151 KB   24/52 KB   30/63 KB   13/151 KB   24/52 KB   30/63 KB   13/151 KB   27/52 KB   30/63 KB   13/151 KB   27/52 KB   4/30 KB   30/63 KB   13/151 KB   27/52 KB   6/30 KB   30/63 KB   13/151 KB   27/52 KB   9/30 KB   32/63 KB   13/151 KB   27/52 KB   9/30 KB   32/63 KB   13/151 KB   30/52 KB   9/30 KB   32/63 KB   13/151 KB   30/52 KB   12/30 KB   32/63 KB   15/151 KB   30/52 KB   12/30 KB   32/63 KB   19/151 KB   30/52 KB   12/30 KB   32/63 KB   19/151 KB   30/52 KB   12/30 KB   32/63 KB   19/151 KB   30/52 KB   15/30 KB   35/63 KB   19/151 KB   31/52 KB   15/30 KB   32/63 KB   19/151 KB   31/52 KB   15/30 KB   35/63 KB   19/151 KB   33/52 KB   15/30 KB   35/63 KB   19/151 KB   33/52 KB   17/30 KB   38/63 KB   19/151 KB   33/52 KB   17/30 KB   38/63 KB   19/151 KB   33/52 KB   19/30 KB   38/63 KB   19/151 KB   33/52 KB   20/30 KB   38/63 KB   19/151 KB   36/52 KB   20/30 KB   38/63 KB   22/151 KB   36/52 KB   20/30 KB   38/63 KB   22/151 KB   36/52 KB   23/30 KB   38/63 KB   22/151 KB   36/52 KB   26/30 KB   38/63 KB   22/151 KB   37/52 KB   26/30 KB   41/63 KB   22/151 KB   37/52 KB   26/30 KB   41/63 KB   22/151 KB   38/52 KB   26/30 KB   41/63 KB   23/151 KB   38/52 KB   26/30 KB   41/63 KB   24/151 KB   38/52 KB   26/30 KB   41/63 KB   24/151 KB   38/52 KB   27/30 KB   41/63 KB   24/151 KB   38/52 KB   29/30 KB   41/63 KB   24/151 KB   38/52 KB   30/30 KB   41/63 KB   24/151 KB   41/52 KB   30/30 KB   41/63 KB   26/151 KB   41/52 KB   30/30 KB   41/63 KB   27/151 KB   41/52 KB   30/30 KB   41/63 KB   29/151 KB   41/52 KB   30/30 KB   41/63 KB   30/151 KB   41/52 KB   30/30 KB   41/63 KB   31/151 KB   41/52 KB   30/30 KB   41/63 KB   33/151 KB   41/52 KB   30/30 KB   41/63 KB   34/151 KB   41/52 KB   30/30 KB   41/63 KB   36/151 KB   41/52 KB   30/30 KB   41/63 KB   38/151 KB   41/52 KB   30/30 KB   41/63 KB   40/151 KB   41/52 KB   30/30 KB   41/63 KB   41/151 KB   41/52 KB   30/30 KB   44/63 KB   41/151 KB   41/52 KB   30/30 KB   45/63 KB   41/151 KB   41/52 KB   30/30 KB   46/63 KB   41/151 KB   41/52 KB   30/30 KB   48/63 KB   41/151 KB   41/52 KB   30/30 KB   48/63 KB   41/151 KB   45/52 KB   30/30 KB   48/63 KB   41/151 KB   47/52 KB   30/30 KB   49/63 KB   41/151 KB   47/52 KB   30/30 KB   51/63 KB   41/151 KB   47/52 KB   30/30 KB   51/63 KB   41/151 KB   50/52 KB   30/30 KB   53/63 KB   41/151 KB   50/52 KB   30/30 KB   53/63 KB   41/151 KB   52/52 KB   30/30 KB   55/63 KB   41/151 KB   52/52 KB   30/30 KB   56/63 KB   41/151 KB   52/52 KB   30/30 KB   58/63 KB   41/151 KB   52/52 KB   30/30 KB   59/63 KB   41/151 KB   52/52 KB   30/30 KB   60/63 KB   41/151 KB   52/52 KB   30/30 KB   62/63 KB   41/151 KB   52/52 KB   30/30 KB   63/63 KB   41/151 KB   52/52 KB   30/30 KB   63/63 KB   45/151 KB   52/52 KB   30/30 KB   63/63 KB   45/151 KB   52/52 KB   30/30 KB   63/63 KB   47/151 KB   52/52 KB   30/30 KB   63/63 KB   50/151 KB   52/52 KB   30/30 KB   63/63 KB   53/151 KB   52/52 KB   30/30 KB   63/63 KB   54/151 KB   52/52 KB   30/30 KB   63/63 KB   55/151 KB   52/52 KB   30/30 KB                                                Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-invoker/2.1.1/maven-invoker-2.1.1.jar (30 KB at 28.6 KB/sec)
+63/63 KB   57/151 KB   52/52 KB              63/63 KB   58/151 KB   52/52 KB   63/63 KB   60/151 KB   52/52 KB   63/63 KB   61/151 KB   52/52 KB   63/63 KB   64/151 KB   52/52 KB   63/63 KB   67/151 KB   52/52 KB   63/63 KB   69/151 KB   52/52 KB   63/63 KB   71/151 KB   52/52 KB   63/63 KB   72/151 KB   52/52 KB   63/63 KB   75/151 KB   52/52 KB   63/63 KB   76/151 KB   52/52 KB   63/63 KB   78/151 KB   52/52 KB   63/63 KB   79/151 KB   52/52 KB   63/63 KB   81/151 KB   52/52 KB   63/63 KB   82/151 KB   52/52 KB   63/63 KB   83/151 KB   52/52 KB   63/63 KB   85/151 KB   52/52 KB   63/63 KB   86/151 KB   52/52 KB   63/63 KB   88/151 KB   52/52 KB   63/63 KB   89/151 KB   52/52 KB   63/63 KB   90/151 KB   52/52 KB   63/63 KB   92/151 KB   52/52 KB   63/63 KB   93/151 KB   52/52 KB   63/63 KB   95/151 KB   52/52 KB   63/63 KB   96/151 KB   52/52 KB   63/63 KB   98/151 KB   52/52 KB                                     Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-tree/2.2/maven-dependency-tree-2.2.jar (63 KB at 53.3 KB/sec)
+                                  Downloaded: http://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.2/asm-5.0.2.jar (52 KB at 44.2 KB/sec)
+99/151 KB                         103/151 KB   103/151 KB   105/151 KB   106/151 KB   109/151 KB   110/151 KB   112/151 KB   114/151 KB   116/151 KB   117/151 KB   119/151 KB   120/151 KB   121/151 KB   123/151 KB   124/151 KB   126/151 KB   127/151 KB   128/151 KB   130/151 KB   131/151 KB   134/151 KB   135/151 KB   137/151 KB   138/151 KB   140/151 KB   141/151 KB   143/151 KB   144/151 KB   145/151 KB   147/151 KB   148/151 KB   150/151 KB   151/151 KB   151/151 KB                Downloaded: http://repo1.maven.org/maven2/org/apache/maven/doxia/doxia-core/1.2/doxia-core-1.2.jar (151 KB at 88.1 KB/sec)
+4/31 KB      8/31 KB   12/31 KB   14/31 KB   15/31 KB   18/31 KB   20/31 KB   21/31 KB   22/31 KB   24/31 KB   27/31 KB   30/31 KB   31/31 KB              Downloaded: http://repo1.maven.org/maven2/org/apache/maven/shared/maven-dependency-analyzer/1.6/maven-dependency-analyzer-1.6.jar (31 KB at 7.7 KB/sec)
+[INFO] com.ijpay:IJPay-Demo:war:0.0.1-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:1.5.6.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:1.5.6.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:1.5.6.RELEASE:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.2.0:test
+[INFO] |  |  +- net.minidev:json-smart:jar:2.2.1:test
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:1.1:test
+[INFO] |  |  |     \- org.ow2.asm:asm:jar:5.0.3:test
+[INFO] |  |  \- org.slf4j:slf4j-api:jar:1.7.25:compile
+[INFO] |  +- junit:junit:jar:4.12:test
+[INFO] |  +- org.assertj:assertj-core:jar:2.6.0:test
+[INFO] |  +- org.mockito:mockito-core:jar:1.10.19:test
+[INFO] |  |  \- org.objenesis:objenesis:jar:2.1:test
+[INFO] |  +- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] |  +- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.4.0:test
+[INFO] |  \- org.springframework:spring-core:jar:4.3.10.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:1.5.6.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:1.5.6.RELEASE:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:1.5.6.RELEASE:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.1.11:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.1.11:compile
+[INFO] |  |  |  +- org.slf4j:jul-to-slf4j:jar:1.7.25:compile
+[INFO] |  |  |  \- org.slf4j:log4j-over-slf4j:jar:1.7.25:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.17:runtime
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:1.5.6.RELEASE:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:8.5.16:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:8.5.16:compile
+[INFO] |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:8.5.16:compile
+[INFO] |  +- org.hibernate:hibernate-validator:jar:5.3.5.Final:compile
+[INFO] |  |  +- javax.validation:validation-api:jar:1.1.0.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.3.1.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.3.3:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.8.9:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.8.0:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.8.9:compile
+[INFO] |  +- org.springframework:spring-web:jar:4.3.10.RELEASE:compile
+[INFO] |  |  +- org.springframework:spring-aop:jar:4.3.10.RELEASE:compile
+[INFO] |  |  +- org.springframework:spring-beans:jar:4.3.10.RELEASE:compile
+[INFO] |  |  \- org.springframework:spring-context:jar:4.3.10.RELEASE:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:4.3.10.RELEASE:compile
+[INFO] |     \- org.springframework:spring-expression:jar:4.3.10.RELEASE:compile
+[INFO] +- org.springframework.boot:spring-boot-configuration-processor:jar:1.5.6.RELEASE:compile
+[INFO] |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:compile
+[INFO] +- org.mybatis.spring.boot:mybatis-spring-boot-starter:jar:1.3.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-jdbc:jar:1.5.6.RELEASE:compile
+[INFO] |  |  +- org.apache.tomcat:tomcat-jdbc:jar:8.5.16:compile
+[INFO] |  |  |  \- org.apache.tomcat:tomcat-juli:jar:8.5.16:compile
+[INFO] |  |  \- org.springframework:spring-jdbc:jar:4.3.10.RELEASE:compile
+[INFO] |  |     \- org.springframework:spring-tx:jar:4.3.10.RELEASE:compile
+[INFO] |  +- org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:jar:1.3.0:compile
+[INFO] |  +- org.mybatis:mybatis:jar:3.4.4:compile
+[INFO] |  \- org.mybatis:mybatis-spring:jar:1.3.1:compile
+[INFO] +- com.jfinal:enjoy:jar:3.2:compile
+[INFO] +- com.alibaba:fastjson:jar:1.2.37:compile
+[INFO] +- org.springframework.boot:spring-boot-devtools:jar:1.5.6.RELEASE:compile
+[INFO] |  +- org.springframework.boot:spring-boot:jar:1.5.6.RELEASE:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:1.5.6.RELEASE:compile
+[INFO] +- com.alibaba:alipay-sdk-java:jar:java20171012102412:system
+[INFO] +- com.unionpay:unionpay-sdk-java:jar:1.54:system
+[INFO] +- com.github.javen205:IJPay:jar:1.1.3:compile
+[INFO] +- com.google.zxing:core:jar:3.2.1:compile
+[INFO] +- com.google.zxing:javase:jar:3.2.1:compile
+[INFO] |  \- com.beust:jcommander:jar:1.48:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.4:compile
+[INFO] +- com.squareup.okhttp:okhttp:jar:2.7.5:compile
+[INFO] +- com.squareup.okhttp3:okhttp:jar:3.8.0:compile
+[INFO] +- com.squareup.okio:okio:jar:1.11.0:compile
+[INFO] +- com.github.binarywang:weixin-java-mp:jar:2.8.0:compile
+[INFO] |  \- com.github.binarywang:weixin-java-common:jar:2.8.0:compile
+[INFO] |     +- com.thoughtworks.xstream:xstream:jar:1.4.9:compile
+[INFO] |     |  +- xmlpull:xmlpull:jar:1.1.3.1:compile
+[INFO] |     |  \- xpp3:xpp3_min:jar:1.1.4c:compile
+[INFO] |     +- org.apache.httpcomponents:httpclient:jar:4.5.3:compile
+[INFO] |     |  \- org.apache.httpcomponents:httpcore:jar:4.4.6:compile
+[INFO] |     +- org.apache.httpcomponents:httpmime:jar:4.5.3:compile
+[INFO] |     +- org.slf4j:jcl-over-slf4j:jar:1.7.25:compile
+[INFO] |     +- com.google.code.gson:gson:jar:2.8.1:compile
+[INFO] |     +- commons-codec:commons-codec:jar:1.10:compile
+[INFO] |     +- commons-io:commons-io:jar:2.5:compile
+[INFO] |     \- com.google.guava:guava:jar:20.0:compile
+[INFO] +- com.github.pagehelper:pagehelper-spring-boot-starter:jar:1.1.2:compile
+[INFO] |  +- com.github.pagehelper:pagehelper-spring-boot-autoconfigure:jar:1.1.2:compile
+[INFO] |  \- com.github.pagehelper:pagehelper:jar:5.0.3:compile
+[INFO] |     \- com.github.jsqlparser:jsqlparser:jar:1.0:compile
+[INFO] +- com.alibaba:druid-spring-boot-starter:jar:1.1.0:compile
+[INFO] |  \- com.alibaba:druid:jar:1.1.0:compile
+[INFO] |     +- com.alibaba:jconsole:jar:1.8.0:system
+[INFO] |     \- com.alibaba:tools:jar:1.8.0:system
+[INFO] +- mysql:mysql-connector-java:jar:5.1.41:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] \- org.springframework:spring-test:jar:5.0.5.RELEASE:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 26.460 s
+[INFO] Finished at: 2018-04-28T16:39:22+08:00
+[INFO] Final Memory: 29M/314M
+[INFO] ------------------------------------------------------------------------

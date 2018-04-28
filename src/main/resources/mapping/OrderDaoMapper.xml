@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ijpay.mapper.OrderDAO">
+    <insert id="insertOrder">
+        insert into p_order (orderid,accountphone,openid,productname,unitprice,riginplace,commodityid,imgurl,paid,orderdate,outTradeNo,state) values (#{orderid},#{accountphone},#{openid},#{productname},#{unitprice},#{riginplace},#{commodityid},#{imgurl},#{paid},#{orderdate},#{outTradeNo},#{state})
+    </insert>
+    <select id="selectOrderBy" resultType="com.ijpay.entity.Order">
+    select productname,unitprice,riginplace,commodityid,imgurl,orderdate from p_order where accountphone = #{accountphone} and openid = #{openid}
+    </select>
+
+    <update id="updateOrderByNo">
+        update p_order set type=#{type},transactionId=#{transactionId},totalFee=#{totalFee},state=#{state} where outTradeNo=#{outTradeNo}
+    </update>
+
+    <update id="updateOrderById">
+        update p_order set outRefundNo=#{outRefundNo},refundFee=#{refundFee},state=#{state} where outTradeNo=#{outTradeNo} or transactionId=#{transactionId}
+    </update>
+
+    <select id="selectByNull" resultType="com.ijpay.entity.Order">
+        select * from p_order where outTradeNo=#{outTradeNo}
+    </select>
+
+    <update id="updateByNo">
+        update p_order set outTradeNo=#{outTradeNo} where orderid=#{orderid}
+    </update>
+    <insert id="insertOrderBy">
+         insert into p_order (userid,openid,outTradeNo,state) values (#{userid},#{openid},#{outTradeNo},#{state})
+    </insert>
+    <select id="selectOrderByState" resultType="com.ijpay.entity.Order">
+        select * from p_order where openid=#{openid} and state=#{state}
+    </select>
+
+    <select id="selectOrderByUserid" resultType="com.ijpay.entity.Order">
+        select * from p_order where userid=#{userid} and state=#{state}
+    </select>
+</mapper>

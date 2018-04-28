@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wechat.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -29,7 +30,6 @@ import com.jpay.unionpay.SDKConfig;
 import com.jpay.unionpay.UnionPayApi;
 import com.jpay.unionpay.UnionPayApiConfig;
 import com.jpay.vo.AjaxResult;
-import com.wechat.utils.JsonUtils;
 
 @Controller
 @RequestMapping("/unionpay")

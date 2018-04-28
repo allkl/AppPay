@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8080
   context-path: /
   tomcat:
     maxHttpHeaderSize: 10240000

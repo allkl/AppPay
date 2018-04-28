@@ -2,6 +2,7 @@ package com.ijpay.controller;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,7 +33,7 @@ public class IndexController {
     @Autowired
     private WxMpService wxService;
     
-    @RequestMapping("")
+    @RequestMapping("/")
     @ResponseBody
     public String index(){
     	logger.info("欢迎使用IJPay 开发加群148540125交流 -By Javen");

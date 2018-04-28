@@ -1,21 +1,21 @@
 package com.ijpay.controller.alipay;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.*;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeCreateResponse;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.ijpay.entity.AliPayBean;
+import com.ijpay.entity.Order;
+import com.ijpay.service.OrderService;
+import com.ijpay.utils.GetString;
 import com.jpay.alipay.AliPayApi;
 import com.jpay.alipay.AliPayApiConfig;
 import com.jpay.alipay.AliPayApiConfigKit;
 import com.jpay.util.StringUtils;
 import com.jpay.vo.AjaxResult;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 
@@ -34,10 +35,12 @@ import java.util.Map;
 public class AliPayController extends AliPayApiController {
     private static final Logger log = LoggerFactory.getLogger(AliPayController.class);
 
-	@Autowired
-	private AliPayBean aliPayBean;
 
 	private AjaxResult result = new AjaxResult();
+	@Autowired
+	private AliPayBean aliPayBean;
+	@Autowired
+	private OrderService orderService;
 
 	@Override
 	public AliPayApiConfig getApiConfig() {
@@ -62,7 +65,7 @@ public class AliPayController extends AliPayApiController {
 	public String test(){
 		String charset = AliPayApiConfigKit.getAliPayApiConfig().getCharset();
 		log.info("charset>"+charset);
-		return aliPayBean.toString();
+		return String.valueOf(AliPayBean.class);
 	}
 
 
@@ -71,17 +74,23 @@ public class AliPayController extends AliPayApiController {
 	 */
 	@RequestMapping(value = "/appPay")
 	@ResponseBody
-	public AjaxResult appPay() {
+	public AjaxResult appPay(@Param("userid")String userid,@Param("totalAmount") Double totalAmount,@Param("outTradeNo")String outTradeNo){
 		try {
 			AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
 			model.setBody("我是测试数据-By Javen");
 			model.setSubject("App支付测试-By Javen");
-			model.setOutTradeNo(StringUtils.getOutTradeNo());
+			if (outTradeNo==null) {
+				String tdNo = StringUtils.getOutTradeNo();
+				model.setOutTradeNo(tdNo);
+			}else{
+				model.setOutTradeNo(outTradeNo);
+			}
 			model.setTimeoutExpress("30m");
-			model.setTotalAmount("0.01");
+			model.setTotalAmount(String.valueOf(totalAmount));
 			model.setPassbackParams("callback params");
 			model.setProductCode("QUICK_MSECURITY_PAY");
 			String orderInfo = AliPayApi.startAppPay(model, aliPayBean.getDomain() + "/alipay/notify_url");
+			orderService.addOrderBy(userid,"",outTradeNo,"0");
 			result.success(orderInfo);
 		} catch (AlipayApiException e) {
 			e.printStackTrace();
@@ -98,7 +107,7 @@ public class AliPayController extends AliPayApiController {
 		String subject = "Javen Wap支付测试";
 		String totalAmount = "1";
 		String passbackParams = "1";
-		String returnUrl = aliPayBean.getDomain() + "/alipay/return_url";
+		String returnUrl =aliPayBean.getDomain()+ "/alipay/return_url";
 		String notifyUrl = aliPayBean.getDomain() + "/alipay/notify_url";
 
 		AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
@@ -274,15 +283,15 @@ public class AliPayController extends AliPayApiController {
 	 */
 	@RequestMapping(value = "/tradeRefund")
 	@ResponseBody
-	public String tradeRefund() {
+	public String tradeRefund(@Param("total_fee")Double total_fee, @Param("refundAmount")Double refundAmount, @Param("tradeNo")String tradeNo, @Param("outTradeNo")String outTradeNo) {
 
 		try {
 			AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-			model.setOutTradeNo("042611072715247");//商户订单号		 
-			model.setTradeNo("2018042621001004610578165813");//支付宝订单号
-			model.setRefundAmount("0.01");
+			model.setOutTradeNo(outTradeNo);//商户订单号
+			model.setTradeNo(tradeNo);//支付宝订单号
+			model.setRefundAmount(String.valueOf(refundAmount));
 			model.setRefundReason("正常退款");
-			
+			orderService.modifyOrderById(outTradeNo,tradeNo, GetString.getRandomStringByLength(32),refundAmount,"0");
 			return AliPayApi.tradeRefund(model);
 		} catch (AlipayApiException e) {
 			e.printStackTrace();
@@ -419,6 +428,12 @@ public class AliPayController extends AliPayApiController {
 
 			if (verify_result) {// 验证成功
 				// TODO 请在这里加上商户的业务逻辑程序代码
+				String trade_no = map.get("trade_no");
+				// 商户订单号
+				String out_trade_no      = map.get("out_trade_no");
+				String trade_type      = map.get("trade_type");
+				String total_fee     = map.get("total_fee");
+				orderService.modifyOrderByNo(trade_type,out_trade_no,trade_no,Double.parseDouble(total_fee),"1");
 				System.out.println("return_url 验证成功");
 
 				return "success";
@@ -451,6 +466,12 @@ public class AliPayController extends AliPayApiController {
 
 			if (verify_result) {// 验证成功
 				// TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
+				String trade_no = params.get("trade_no");
+				// 商户订单号
+				String out_trade_no      = params.get("out_trade_no");
+				String trade_type      = params.get("trade_type");
+				String total_fee     = params.get("total_fee");
+				orderService.modifyOrderByNo(trade_type,out_trade_no,trade_no,Double.parseDouble(total_fee),"1");
 				System.out.println("notify_url 验证成功succcess");
 				return "success";
 			} else {
@@ -462,5 +483,21 @@ public class AliPayController extends AliPayApiController {
 			e.printStackTrace();
 			return "failure";
 		}
+	}
+
+	@RequestMapping(value = "/orderquery")
+	public Object orderquery(String userid){
+		List<Order> orders = orderService.queryOrderByUserid(userid,"1");
+		JSONArray json = new JSONArray();
+		for(Order order : orders){
+			JSONObject jo = new JSONObject();
+			jo.put("outTradeNo", order.getOutTradeNo());
+			jo.put("trade_no",order.getTransactionId());
+			jo.put("totalFee",order.getTotalFee());
+			jo.put("state",order.getState());
+			jo.put("orderdate",order.getOrderdate());
+			json.add(jo);
+		}
+		return json;
 	}
 }
