@@ -14,7 +14,47 @@ public class WxPayBean {
     private String partnerKey;
     private String certPath;
     private String domain;
-    
+	private String key;
+
+	//小程序ID
+	private String appID;
+	//商户号
+	private String mch_id;
+	//Appsecret
+	private String secret;
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getAppID() {
+		return appID;
+	}
+
+	public void setAppID(String appID) {
+		this.appID = appID;
+	}
+
+	public String getMch_id() {
+		return mch_id;
+	}
+
+	public void setMch_id(String mch_id) {
+		this.mch_id = mch_id;
+	}
+
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
 	public String getAppId() {
 		return appId;
 	}

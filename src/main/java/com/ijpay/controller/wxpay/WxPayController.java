@@ -2,21 +2,29 @@ package com.ijpay.controller.wxpay;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ijpay.entity.H5ScencInfo;
-import com.ijpay.entity.Order;
-import com.ijpay.entity.WxPayBean;
+import com.ijpay.entity.*;
 import com.ijpay.service.OrderService;
 import com.ijpay.utils.GetString;
+import com.ijpay.utils.HttpRequest;
+import com.ijpay.utils.MD5;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.wechat.config.WechatMpProperties;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +50,8 @@ import com.jpay.weixin.api.WxPayApiConfig;
 import com.jpay.weixin.api.WxPayApiConfig.PayModel;
 import com.jpay.weixin.api.WxPayApiConfigKit;
 
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.o;
+
 @Controller
 @RequestMapping("/wxpay")
 public class WxPayController extends WxPayApiController {
@@ -50,6 +60,7 @@ public class WxPayController extends WxPayApiController {
 
 	@Autowired
 	WxPayBean wxPayBean;
+
 	@Autowired
 			private OrderService orderService;
 	
@@ -96,7 +107,143 @@ public class WxPayController extends WxPayApiController {
 		String dir = request.getServletContext().getRealPath("/");
 		return dir;
 	}
-	
+
+	/**
+	 * 小程序支付
+	 */
+	/*@RequestMapping("/getOpenid")
+	public JSONObject getOpenid(String code) throws IOException {
+		HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/sns/jscode2session?appid="+ wxPayBean.getAppID()+"&secret="+wxPayBean.getSecret()+"&js_code="+code+"&grant_type=authorization_code");
+		//设置请求器的配置
+		HttpClient httpClient = HttpClients.createDefault();
+		HttpResponse res = httpClient.execute(httpGet);
+		HttpEntity entity = res.getEntity();
+		String result = EntityUtils.toString(entity, "UTF-8");
+		JSONObject reqjson = JSONObject.parseObject(result);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success", true);
+		jsonObject.put("data", reqjson);
+		return jsonObject;
+	}
+
+	@RequestMapping(value = "/pay",method = {RequestMethod.POST,RequestMethod.GET})
+	public JSONObject pay(@Param("openid") String openid, @Param("amount") Double amount,@Param("outTradeNo")String outTradeNo){
+		System.out.println(openid+"====================");
+		System.out.println(amount+"++++++++++++++++++++");
+		try {
+			OrderInfo order = new OrderInfo();
+			order.setAppid(wxPayBean.getAppID());
+			order.setMch_id(wxPayBean.getMchId());
+			order.setNonce_str(GetString.getRandomStringByLength(32));
+			order.setBody("test");
+			if (outTradeNo==null){
+				System.out.println("++++++++++++++++");
+				String s = GetString.getRandomStringByLength(32);
+				order.setOut_trade_no(s);
+				orderService.addOrderBy("","","微信小程序",openid,s, (int) (amount * 100),"test","","","JSAPI",new Date(),"0","");
+			}else {
+				order.setOut_trade_no(outTradeNo);
+			}
+			//order.setTotal_fee((int) (amount * 100));
+			order.setTotal_fee(1);
+			order.setSpbill_create_ip("192.168.253.230");
+			order.setNotify_url(notify_url);
+			order.setTrade_type("JSAPI");
+			order.setOpenid(openid);
+			order.setSign_type("MD5");
+			//生成签名
+			//String sign = Signature.getSign(order);
+			ArrayList<String> list = new ArrayList<String>();
+			Class cls = order.getClass();
+			Field[] fields = cls.getDeclaredFields();
+			for (Field f : fields) {
+				f.setAccessible(true);
+				if (f.get(order) != null && f.get(order) != "") {
+					String name = f.getName();
+					XStreamAlias anno = f.getAnnotation(XStreamAlias.class);
+					if(anno != null)
+						name = anno.value();
+					list.add(name + "=" + f.get(order) + "&");
+				}
+			}
+			int size = list.size();
+			String [] arrayToSort = list.toArray(new String[size]);
+			Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < size; i ++) {
+				sb.append(arrayToSort[i]);
+			}
+			String res = sb.toString();
+			res += "key=" + wxPayBean.getKey();
+			System.out.println("签名数据："+res);
+			String sign = MD5.MD5Encode(res,"utf-8").toUpperCase();
+			order.setSign(sign);
+			String result = HttpRequest.sendPost("https://api.mch.weixin.qq.com/pay/unifiedorder", order);
+			System.out.println(result);
+			XStream xStream = new XStream(new DomDriver());
+			xStream.alias("xml", OrderReturnInfo.class);
+			OrderReturnInfo Info = (OrderReturnInfo) xStream.fromXML(result);
+			System.out.println(Info + "++++++++++++++++++++++++++++");
+			JSONObject json = new JSONObject();
+			json.put("prepay_id", Info.getPrepay_id());
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@RequestMapping("/getSign")
+	public JSONObject getSign(String repay_id){
+		try {
+
+			SignInfo signInfo = new SignInfo();
+			signInfo.setAppId(wxPayBean.getAppID());
+			long time = System.currentTimeMillis()/1000;
+			signInfo.setTimeStamp(String.valueOf(time));
+			signInfo.setNonceStr(GetString.getRandomStringByLength(32));
+			signInfo.setRepay_id("prepay_id="+repay_id);
+			signInfo.setSignType("MD5");
+			//生成签名
+			//String sign = Signature.getSign(signInfo);
+			ArrayList<String> list = new ArrayList<String>();
+			Class cls = signInfo.getClass();
+			Field[] fields = cls.getDeclaredFields();
+			for (Field f : fields) {
+				f.setAccessible(true);
+				if (f.get(signInfo) != null && f.get(signInfo) != "") {
+					String name = f.getName();
+					XStreamAlias anno = f.getAnnotation(XStreamAlias.class);
+					if(anno != null)
+						name = anno.value();
+					list.add(name + "=" + f.get(signInfo) + "&");
+				}
+			}
+			int size = list.size();
+			String [] arrayToSort = list.toArray(new String[size]);
+			Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < size; i ++) {
+				sb.append(arrayToSort[i]);
+			}
+			String result = sb.toString();
+			result += "key=" + wxPayBean.getKey();
+			System.out.println("签名数据："+result);
+			String sign = MD5.MD5Encode(result,"utf-8").toUpperCase();
+
+			JSONObject json = new JSONObject();
+			json.put("timeStamp", signInfo.getTimeStamp());
+			json.put("nonceStr", signInfo.getNonceStr());
+			json.put("package", signInfo.getRepay_id());
+			json.put("signType", signInfo.getSignType());
+			json.put("paySign", sign);
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}*/
 	/**
 	 * 微信H5 支付
 	 * 注意：必须再web页面中发起支付且域名已添加到开发配置中
@@ -519,22 +666,22 @@ log.info(xmlResult);
 	 */
 	@RequestMapping(value = "/appPay",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public AjaxResult appPay(@Param("totalFee") Double totalFee,@Param("openid")String openid, HttpServletRequest request){
+	public AjaxResult appPay(@Param("totalFee") Float totalFee,@Param("openid")String openid,HttpServletRequest request){
 		log.info("---------------------微信支付下单------------------------------");
 		//不用设置授权目录域名
 		//统一下单地址 https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1#
 		
 		String ip = IpKit.getRealIp(request);
 		if (StrKit.isBlank(ip)) {
-			ip = "192.168.253.230";
+			ip = "127.0.0.1";
 		}
 		log.info("回调地址："+notify_url);
 		String s = String.valueOf(System.currentTimeMillis());
 		Map<String, String> params = WxPayApiConfigKit.getWxPayApiConfig()
 				.setAttach("By Javen")
 				.setBody("By Javen")
-				.setSpbillCreateIp(ip)
-				.setTotalFee("1")
+				.setSpbillCreateIp("192.168.1.103")
+				.setTotalFee(String.valueOf((int)(totalFee*100)))
 				.setTradeType(TradeType.APP)
 				.setNotifyUrl(notify_url)
 				.setOutTradeNo(s)
@@ -573,7 +720,7 @@ log.info(xmlResult);
 		packageParams.put("timestamp", System.currentTimeMillis() / 1000 + "");
 		String packageSign = PaymentKit.createSign(packageParams, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey());
 		packageParams.put("sign", packageSign);
-		orderService.addOrderBy(GetString.getRandomStringByLength(32),openid,s,"0");
+		orderService.addOrderBy("","","微信APP",openid,s,(int)(totalFee*100),params.get("body"),"","","APP",new Date(),"0","");
 		
 		String jsonStr = JSON.toJSONString(packageParams);
 log.info("最新返回apk的参数:"+jsonStr);
@@ -640,14 +787,13 @@ log.info("最新返回apk的参数:"+jsonStr);
 		String openId      = params.get("openid");
 		// 总金额
 		String total_fee     = params.get("total_fee");
-		//现金支付金额
-		String refund_fee = params.get("refund_fee");
-		// 微信支付订单号
+        Float refund_fee = Float.parseFloat(params.get("refund_fee"));
+        // 微信支付订单号
 		String transaction_id      = params.get("transaction_id");
 		// 商户订单号
 		String out_trade_no      = params.get("out_trade_no");
 		String out_refund_no      = params.get("out_refund_no");
-		orderService.modifyOrderById(out_trade_no,transaction_id,out_refund_no,Double.parseDouble(refund_fee)/100,"2");
+		orderService.modifyOrderById(out_trade_no,transaction_id,out_refund_no,refund_fee,"2",new Date());
 		return notify_url;
 	}
 	
@@ -677,7 +823,8 @@ log.info("最新返回apk的参数:"+jsonStr);
 	String bank_type      = params.get("bank_type");
 	// 总金额
 	String total_fee     = params.get("total_fee");
-	//现金支付金额
+        Float fee = Float.parseFloat(total_fee)/100;
+        //现金支付金额
 	String cash_fee     = params.get("cash_fee");
 	// 微信支付订单号
 	String transaction_id      = params.get("transaction_id");
@@ -695,7 +842,7 @@ log.info("最新返回apk的参数:"+jsonStr);
 //		String err_code_des      = params.get("err_code_des");
 		// 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
 		// 避免已经成功、关闭、退款的订单被再次更新
-		orderService.modifyOrderByNo(trade_type,out_trade_no,transaction_id,Double.parseDouble(total_fee),"1");
+		orderService.modifyOrderByNo(out_trade_no,transaction_id,fee,new Date(),"1");
 		if(PaymentKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey())){
 			if (("SUCCESS").equals(result_code)){
 				//更新订单信息
@@ -711,17 +858,17 @@ log.info("最新返回apk的参数:"+jsonStr);
 		return xmlMsg;
 	}
 
-	@RequestMapping(value = "/reqOrderquery")
-	public Object reqOrderquery(String openid){
-		List<Order> orders = orderService.queryOrderByState(openid, "1");
+	@RequestMapping(value = "/reqOrderquery",method = {RequestMethod.POST,RequestMethod.GET})
+	public Object reqOrderquery(@Param("openid") String openid,@Param("tradeState")String tradeState){
+		List<Order> orders = orderService.queryOrderByOpenid(openid,"1");
 		JSONArray json = new JSONArray();
 		for(Order order : orders){
 			JSONObject jo = new JSONObject();
 			jo.put("outTradeNo", order.getOutTradeNo());
 			jo.put("transactionId",order.getTransactionId());
-			jo.put("totalFee",order.getTotalFee());
-			jo.put("state",order.getState());
-			jo.put("orderdate",order.getOrderdate());
+			jo.put("fee",order.getFee());
+			jo.put("tradeState",order.getTradeState());
+			jo.put("timeExpire",order.getTimeExpire());
 			json.add(jo);
 		}
 		return json;

@@ -20,55 +20,88 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
    @Resource(name = "orderMapper")
     private OrderMapper orderMapper;
-    @Override
-    public void addOrder(@Param("accountphone") String accountphone, @Param("openid") String openid, @Param("imgurl") String imgurl, @Param("productname") String productname, @Param("unitprice") Double unitprice, @Param("riginplace") String riginplace, @Param("commodityid") String commodityid, @Param("paid") String paid) {
-        Order order = new Order();
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        order.setOrderid(uuid);
-        order.setAccountphone(accountphone);
+
+   @Autowired
+   private Order order;
+    /**
+     * 预支付添加
+     * @param orderid
+     * @param deviceInfo
+     * @param payType
+     * @param openid
+     * @param outTradeNo
+     * @param totalFee
+     * @param tbody
+     * @param detail
+     * @param attach
+     * @param tradeType
+     * @param timeStart
+     * @param tradeState
+     * @param userId
+     */
+    public void addOrderBy(@Param("orderid")String orderid, @Param("deviceInfo")String deviceInfo, @Param("payType")String payType, @Param("openid")String openid, @Param("outTradeNo")String outTradeNo, @Param("totalFee")Integer totalFee, @Param("tbody")String tbody, @Param("detail")String detail, @Param("attach")String attach, @Param("tradeType")String tradeType, @Param("timeStart")Date timeStart, @Param("tradeState")String tradeState, @Param("userId")String userId){
+        order.setOrderid(orderid);
+        order.setDeviceInfo(deviceInfo);
+        order.setPayType(payType);
         order.setOpenid(openid);
-        order.setOrderdate(new Date());
-        order.setOutTradeNo(GetString.getRandomStringByLength(32).replaceAll("-",""));
-        order.setState("0");
-        orderMapper.insertOrder(order);
+        order.setOutTradeNo(outTradeNo);
+        order.setTotalFee(totalFee);
+        order.setTbody(tbody);
+        order.setDetail(detail);
+        order.setAttach(attach);
+        order.setTradeType(tradeType);
+        order.setTimeStart(timeStart);
+        order.setTradeState(tradeState);
+        order.setUserId(userId);
+        orderMapper.insertOrderBy(order);
     }
 
-    @Override
-    @Transactional(propagation = Propagation.SUPPORTS,readOnly = true)
-    public List<Order> queryOrderBy(@Param("accountphone") String accountphone, @Param("openid") String openid) {
-        return orderMapper.selectOrderBy(accountphone,openid);
+    /**
+     * 支付完成后修改
+     * @param outTradeNo
+     * @param transactionId
+     * @param fee
+     * @param timeExpire
+     * @param tradeState
+     */
+    public void modifyOrderByNo( @Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("fee") Float fee,@Param("timeExpire") Date timeExpire, @Param("tradeState") String tradeState){
+        orderMapper.updateOrderByNo(outTradeNo,transactionId,fee,timeExpire,tradeState);
     }
 
-    @Override
-    public void modifyOrderByNo(String type,String outTradeNo, String transactionId, Double totalFee, String state) {
-        orderMapper.updateOrderByNo(type,outTradeNo,transactionId,totalFee,state);
+
+
+    public void modifyOrderById(@Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("outRefundNo") String outRefundNo, @Param("refundFee") Float refundFee, @Param("tradeState") String tradeState,@Param("refundSuccessTime") Date refundSuccessTime){
+        orderMapper.updateOrderById(outTradeNo,transactionId,outRefundNo,refundFee,tradeState,refundSuccessTime);
     }
 
-    @Override
-    public void modifyOrderById(@Param("outTradeNo") String outTradeNo, @Param("transactionId")String transactionId, @Param("outRefundNo") String outRefundNo, @Param("refundFee")Double refundFee, @Param("state")String state){
-        orderMapper.updateOrderById(outTradeNo,transactionId,outRefundNo,refundFee,state);
+
+    public Order queryByOutTradeNo(String outTradeNo){
+        return orderMapper.selectByOutTradeNo(outTradeNo);
     }
 
-    public Order queryByNull(String outTradeNo){
-       return orderMapper.selectByNull(outTradeNo);
-    }
 
-    public void modifyByNo(@Param("orderid") String orderid, @Param("outTradeNo")String outTradeNo){
+    public void modifyByNo(@Param("orderid") String orderid, @Param("outTradeNo") String outTradeNo){
         orderMapper.updateByNo(orderid,outTradeNo);
-
     }
 
-    public void addOrderBy(@Param("userid")String userid, @Param("openid") String openid, @Param("outTradeNo")String outTradeNo, @Param("state") String state){
-        orderMapper.insertOrderBy(userid,openid,outTradeNo,state);
+
+    /**
+     * 通过openid和支付状态查询相应的订单
+     * @param openid
+     * @param tradeState
+     * @return
+     */
+    public List<Order> queryOrderByOpenid(@Param("openid") String openid, @Param("tradeState") String tradeState){
+        return orderMapper.selectOrderByOpenid(openid,tradeState);
     }
 
-    @Override
-    public List<Order> queryOrderByState(@Param("openid") String openid, @Param("state") String state) {
-        return orderMapper.selectOrderByState(openid+"", state);
-    }
-
-    @Override
-    public List<Order> queryOrderByUserid(@Param("userid") String userid, @Param("state") String state) {
-        return orderMapper.selectOrderByUserId(userid,state);
+    /**
+     * 通过id和支付状态查询相应的订单
+     * @param userId
+     * @param tradeState
+     * @return
+     */
+    public List<Order> queryOrderByUserId(@Param("userId") String userId, @Param("tradeState") String tradeState){
+       return orderMapper.selectOrderByUserId(userId, tradeState);
     }
 }
