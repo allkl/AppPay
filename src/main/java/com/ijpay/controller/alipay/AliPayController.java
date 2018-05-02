@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -91,7 +92,7 @@ public class AliPayController extends AliPayApiController {
 			model.setPassbackParams("callback params");
 			model.setProductCode("QUICK_MSECURITY_PAY");
 			String orderInfo = AliPayApi.startAppPay(model, aliPayBean.getDomain() + "/alipay/notify_url");
-			orderService.addOrderBy("","","支付宝APP","",outTradeNo,(int)(totalAmount*100),model.getBody(),"","","APP",new Date(),"0",userId);
+			orderService.addOrderBy("","","20","",model.getOutTradeNo(),totalAmount,model.getBody(),"","","APP",new Date(),"0",userId);
 			result.success(orderInfo);
 		} catch (AlipayApiException e) {
 			e.printStackTrace();
@@ -435,7 +436,7 @@ public class AliPayController extends AliPayApiController {
 				String trade_type      = map.get("trade_type");
 				String total_fee     = map.get("total_fee");
 				Float fee = Float.parseFloat(total_fee) / 100;
-				orderService.modifyOrderByNo(out_trade_no,trade_no,fee,new Date(),"1");
+				orderService.modifyOrderByNo("",out_trade_no,trade_no,fee,new Date(),"1");
 				System.out.println("return_url 验证成功");
 
 				return "success";
@@ -472,9 +473,9 @@ public class AliPayController extends AliPayApiController {
 				// 商户订单号
 				String out_trade_no      = params.get("out_trade_no");
 				String trade_type      = params.get("trade_type");
-				String total_fee     = params.get("total_fee");
-				Float fee = Float.parseFloat(total_fee) / 100;
-				orderService.modifyOrderByNo(out_trade_no,trade_no,fee,new Date(),"1");
+				String total_amount     = params.get("total_amount");
+				Float fee = Float.parseFloat(total_amount);
+				orderService.modifyOrderByNo("",out_trade_no,trade_no,fee,new Date(),"1");
 				System.out.println("notify_url 验证成功succcess");
 				return "success";
 			} else {
@@ -488,17 +489,27 @@ public class AliPayController extends AliPayApiController {
 		}
 	}
 
-	@RequestMapping(value = "/orderquery")
+	@RequestMapping(value = "/orderquery",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
 	public Object orderquery(@Param("userId") String userId,@Param("tradeState") String tradeState){
-		List<Order> orders = orderService.queryOrderByUserId(userId,"1");
+
+		List<Order> orders=null;
+		if (tradeState==null){
+			orders = orderService.queryOrderByUserIdAll(userId,"20");
+		}else {
+			orders = orderService.queryOrderByUserId(userId, tradeState,"20");
+		}
 		JSONArray json = new JSONArray();
 		for(Order order : orders){
 			JSONObject jo = new JSONObject();
 			jo.put("outTradeNo", order.getOutTradeNo());
 			jo.put("trade_no",order.getTransactionId());
-			jo.put("totalFee",order.getTotalFee());
 			jo.put("tradeState",order.getTradeState());
 			jo.put("timeExpire",order.getTimeExpire());
+			jo.put("fee",order.getFee());
+			jo.put("timeStart",order.getTimeStart());
+			jo.put("outRefundNo",order.getOutRefundNo());
+			jo.put("refundSuccessTime",order.getRefundSuccessTime());
 			json.add(jo);
 		}
 		return json;

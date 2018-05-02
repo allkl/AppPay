@@ -1,4 +1,4 @@
-package com.uas.fruits.payutil;
+package com.ijpay.utils;
 
 import java.io.*;
 import java.net.HttpURLConnection;

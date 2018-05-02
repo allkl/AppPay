@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
      * @param payType
      * @param openid
      * @param outTradeNo
-     * @param totalFee
+     * @param fee
      * @param tbody
      * @param detail
      * @param attach
@@ -39,13 +39,13 @@ public class OrderServiceImpl implements OrderService {
      * @param tradeState
      * @param userId
      */
-    public void addOrderBy(@Param("orderid")String orderid, @Param("deviceInfo")String deviceInfo, @Param("payType")String payType, @Param("openid")String openid, @Param("outTradeNo")String outTradeNo, @Param("totalFee")Integer totalFee, @Param("tbody")String tbody, @Param("detail")String detail, @Param("attach")String attach, @Param("tradeType")String tradeType, @Param("timeStart")Date timeStart, @Param("tradeState")String tradeState, @Param("userId")String userId){
+    public void addOrderBy(@Param("orderid")String orderid, @Param("deviceInfo")String deviceInfo, @Param("payType")String payType, @Param("openid")String openid, @Param("outTradeNo")String outTradeNo, @Param("fee")Float fee, @Param("tbody")String tbody, @Param("detail")String detail, @Param("attach")String attach, @Param("tradeType")String tradeType, @Param("timeStart")Date timeStart, @Param("tradeState")String tradeState, @Param("userId")String userId){
         order.setOrderid(orderid);
         order.setDeviceInfo(deviceInfo);
         order.setPayType(payType);
         order.setOpenid(openid);
         order.setOutTradeNo(outTradeNo);
-        order.setTotalFee(totalFee);
+        order.setFee(fee);
         order.setTbody(tbody);
         order.setDetail(detail);
         order.setAttach(attach);
@@ -64,8 +64,8 @@ public class OrderServiceImpl implements OrderService {
      * @param timeExpire
      * @param tradeState
      */
-    public void modifyOrderByNo( @Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("fee") Float fee,@Param("timeExpire") Date timeExpire, @Param("tradeState") String tradeState){
-        orderMapper.updateOrderByNo(outTradeNo,transactionId,fee,timeExpire,tradeState);
+    public void modifyOrderByNo( @Param("openid")String openid,@Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("fee") Float fee,@Param("timeExpire") Date timeExpire, @Param("tradeState") String tradeState){
+        orderMapper.updateOrderByNo(openid,outTradeNo,transactionId,fee,timeExpire,tradeState);
     }
 
 
@@ -95,13 +95,23 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectOrderByOpenid(openid,tradeState);
     }
 
+    @Override
+    public List<Order> queryOrderByOpenidAll(String openid) {
+        return orderMapper.selectOrderByOpenidAll(openid);
+    }
+
     /**
      * 通过id和支付状态查询相应的订单
      * @param userId
      * @param tradeState
      * @return
      */
-    public List<Order> queryOrderByUserId(@Param("userId") String userId, @Param("tradeState") String tradeState){
-       return orderMapper.selectOrderByUserId(userId, tradeState);
+    public List<Order> queryOrderByUserId(@Param("userId") String userId, @Param("tradeState") String tradeState,@Param("payType")String payType){
+       return orderMapper.selectOrderByUserId(userId, tradeState,payType);
+    }
+
+    @Override
+    public List<Order> queryOrderByUserIdAll(@Param("userId") String userId,@Param("payType")String payType) {
+        return orderMapper.selectOrderByUserIdAll(userId,payType);
     }
 }

@@ -1,7 +1,6 @@
 package com.ijpay.controller.wxpay;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -15,6 +14,7 @@ import com.ijpay.service.OrderService;
 import com.ijpay.utils.GetString;
 import com.ijpay.utils.HttpRequest;
 import com.ijpay.utils.MD5;
+import com.ijpay.utils.WXUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.annotations.Param;
+import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,6 @@ import com.jpay.weixin.api.WxPayApiConfig;
 import com.jpay.weixin.api.WxPayApiConfig.PayModel;
 import com.jpay.weixin.api.WxPayApiConfigKit;
 
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.o;
 
 @Controller
 @RequestMapping("/wxpay")
@@ -108,10 +108,107 @@ public class WxPayController extends WxPayApiController {
 		return dir;
 	}
 
+
+	//微信支付控制器
+
+	@Override
+	public WxPayApiConfig getWxApiConfig() {
+		return WxPayApiConfig.New()
+				.setAppId("wx172657dad29220cc")//wx172657dad29220cc
+				.setMchId(wxPayBean.getMchId())
+				.setPaternerKey(wxPayBean.getPartnerKey())
+				.setPayModel(PayModel.BUSINESSMODEL);
+	}
+
+
+	/**小程序支付下单
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/jxAppPay",method={RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public JSONObject jxAppPay(@Param("openid") String openid, @Param("fee") Float fee, @Param("outTradeNo")String outTradeNo, HttpServletRequest request){
+		log.info("---------------------微信支付下单------------------------------");
+		System.out.println("小程序 appID："+getWxApiConfig().getAppId());
+		System.out.println("app appID："+WxPayApiConfigKit.getAppId());
+		String ip = IpKit.getRealIp(request);
+		if (StrKit.isBlank(ip)) {
+			ip = "127.0.0.1";
+		}
+		log.info("回调地址："+notify_url);
+		Map<String, String> params = new HashMap<>();
+		params.put("appid",wxPayBean.getAppID());
+		params.put("mch_id", wxPayBean.getMch_id());
+		params.put("nonce_str", String.valueOf(System.currentTimeMillis()));
+		params.put("body", "小程序测试 by arison");
+		if (outTradeNo==null){
+			System.out.println("++++++++++++++++");
+			String s = System.currentTimeMillis() + "";
+			params.put("out_trade_no", s);
+			orderService.addOrderBy(String.valueOf(System.currentTimeMillis()),"","微信小程序",openid,s,fee,params.get("body"),"","","JSAPI",new Date(),"0","");
+		}else {
+			params.put("out_trade_no",outTradeNo);
+		}
+
+		params.put("total_fee",String.valueOf((int)(fee*100)));
+		params.put("notify_url", "http://nf20718343.iask.in:15161/wxpay/pay_result");
+		params.put("spbill_create_ip",ip);
+		//params.put("sign_type", "MD5");//非必填
+		params.put("trade_type", "JSAPI");
+		params.put("openid", openid);
+		params.put("sign",PaymentKit.createSign( params, wxPayBean.getKey()));
+
+		log.info("params:"+JSON.toJSONString(params));
+		//支付
+		String xmlResult =  WxPayApi.pushOrder(false,params);
+
+		// log.info(xmlResult);
+		Map<String, String> resultMap = PaymentKit.xmlToMap(xmlResult);
+
+		String return_code = resultMap.get("return_code");
+		String return_msg = resultMap.get("return_msg");
+		if (!PaymentKit.codeIsOK(return_code)) {
+			//log.info(xmlResult);
+			//result.addError(return_msg);
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("success",false);
+			jsonObject.put("msg",return_msg);
+			return jsonObject;
+		}
+		String result_code = resultMap.get("result_code");
+		if (!PaymentKit.codeIsOK(result_code)) {
+			log.info(xmlResult);
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("success",false);
+			jsonObject.put("msg",return_msg);
+			//result.addError(return_msg);
+			return jsonObject;
+		}
+		// 以下字段在return_code 和result_code都为SUCCESS的时候有返回
+
+		String prepay_id = resultMap.get("prepay_id");
+		//小程序调起支付数据签名字段列表：https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_7&index=5
+		//签名字段要严格按照文档的字段，大小写一定要根据文档字段一致
+		Map<String, String> packageParams = new HashMap<String, String>();
+		packageParams.put("appId", getWxApiConfig().getAppId());
+		packageParams.put("signType", "MD5");//关键字段
+		packageParams.put("package", "prepay_id="+prepay_id);//Sign=WXPay
+		packageParams.put("nonceStr", System.currentTimeMillis() + "");
+		packageParams.put("timeStamp", System.currentTimeMillis() / 1000 + "");
+		String packageSign = PaymentKit.createSign(packageParams, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey());
+		packageParams.put("sign", packageSign);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success",true);
+		jsonObject.put("data",packageParams);
+		//result.success(jsonObject);
+		return jsonObject;
+	}
+
 	/**
 	 * 小程序支付
 	 */
-	/*@RequestMapping("/getOpenid")
+	@RequestMapping(value = "/getOpenid",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
 	public JSONObject getOpenid(String code) throws IOException {
 		HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/sns/jscode2session?appid="+ wxPayBean.getAppID()+"&secret="+wxPayBean.getSecret()+"&js_code="+code+"&grant_type=authorization_code");
 		//设置请求器的配置
@@ -126,26 +223,29 @@ public class WxPayController extends WxPayApiController {
 		return jsonObject;
 	}
 
+
 	@RequestMapping(value = "/pay",method = {RequestMethod.POST,RequestMethod.GET})
-	public JSONObject pay(@Param("openid") String openid, @Param("amount") Double amount,@Param("outTradeNo")String outTradeNo){
+	@ResponseBody
+	public JSONObject pay(@Param("openid") String openid, @Param("fee") Float fee,@Param("outTradeNo")String outTradeNo){
 		System.out.println(openid+"====================");
-		System.out.println(amount+"++++++++++++++++++++");
+		System.out.println(fee+"++++++++++++++++++++");
 		try {
 			OrderInfo order = new OrderInfo();
 			order.setAppid(wxPayBean.getAppID());
-			order.setMch_id(wxPayBean.getMchId());
-			order.setNonce_str(GetString.getRandomStringByLength(32));
+			System.out.println("==========="+wxPayBean.getAppID());
+			order.setMch_id(wxPayBean.getMch_id());
+			order.setNonce_str(System.currentTimeMillis() + "");
 			order.setBody("test");
 			if (outTradeNo==null){
 				System.out.println("++++++++++++++++");
-				String s = GetString.getRandomStringByLength(32);
+				String s = System.currentTimeMillis() + "";
 				order.setOut_trade_no(s);
-				orderService.addOrderBy("","","微信小程序",openid,s, (int) (amount * 100),"test","","","JSAPI",new Date(),"0","");
+				orderService.addOrderBy("","","微信小程序",openid,s,fee,"test","","","JSAPI",new Date(),"0","");
 			}else {
 				order.setOut_trade_no(outTradeNo);
 			}
-			//order.setTotal_fee((int) (amount * 100));
-			order.setTotal_fee(1);
+			order.setTotal_fee((int) (fee * 100));
+			//order.setTotal_fee(1);
 			order.setSpbill_create_ip("192.168.253.230");
 			order.setNotify_url(notify_url);
 			order.setTrade_type("JSAPI");
@@ -193,8 +293,9 @@ public class WxPayController extends WxPayApiController {
 		}
 	}
 
-	@RequestMapping("/getSign")
-	public JSONObject getSign(String repay_id){
+	@RequestMapping(value = "/getSign",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public JSONObject getSign(String prepay_id){
 		try {
 
 			SignInfo signInfo = new SignInfo();
@@ -202,7 +303,7 @@ public class WxPayController extends WxPayApiController {
 			long time = System.currentTimeMillis()/1000;
 			signInfo.setTimeStamp(String.valueOf(time));
 			signInfo.setNonceStr(GetString.getRandomStringByLength(32));
-			signInfo.setRepay_id("prepay_id="+repay_id);
+			signInfo.setRepay_id("prepay_id="+prepay_id);
 			signInfo.setSignType("MD5");
 			//生成签名
 			//String sign = Signature.getSign(signInfo);
@@ -243,7 +344,7 @@ public class WxPayController extends WxPayApiController {
 			return null;
 		}
 
-	}*/
+	}
 	/**
 	 * 微信H5 支付
 	 * 注意：必须再web页面中发起支付且域名已添加到开发配置中
@@ -666,7 +767,7 @@ log.info(xmlResult);
 	 */
 	@RequestMapping(value = "/appPay",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public AjaxResult appPay(@Param("totalFee") Float totalFee,@Param("openid")String openid,HttpServletRequest request){
+	public JSONObject appPay(@Param("fee") Float fee, @Param("userid")String userid, @Param("out_trade_no")String out_trade_no, HttpServletRequest request){
 		log.info("---------------------微信支付下单------------------------------");
 		//不用设置授权目录域名
 		//统一下单地址 https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1#
@@ -676,12 +777,17 @@ log.info(xmlResult);
 			ip = "127.0.0.1";
 		}
 		log.info("回调地址："+notify_url);
-		String s = String.valueOf(System.currentTimeMillis());
+		String s;
+		if (out_trade_no==null){
+			s=String.valueOf(System.currentTimeMillis());
+		}else {
+			s=out_trade_no;
+		}
 		Map<String, String> params = WxPayApiConfigKit.getWxPayApiConfig()
 				.setAttach("By Javen")
 				.setBody("By Javen")
-				.setSpbillCreateIp("192.168.1.103")
-				.setTotalFee(String.valueOf((int)(totalFee*100)))
+				.setSpbillCreateIp("192.168.253.230")
+				.setTotalFee(String.valueOf((int)(fee*100)))
 				.setTradeType(TradeType.APP)
 				.setNotifyUrl(notify_url)
 				.setOutTradeNo(s)
@@ -695,16 +801,22 @@ log.info(xmlResult);
 		
 		String return_code = resultMap.get("return_code");
 		String return_msg = resultMap.get("return_msg");
+		JSONObject jsonObject = new JSONObject();
 		if (!PaymentKit.codeIsOK(return_code)) {
 			log.info(xmlResult);
-			result.addError(return_msg);
-			return result;
+			//result.addError(return_msg);
+			jsonObject.put("success",false);
+			jsonObject.put("msg",return_msg);
+			return jsonObject;
 		}
 		String result_code = resultMap.get("result_code");
 		if (!PaymentKit.codeIsOK(result_code)) {
 			log.info(xmlResult);
-			result.addError(return_msg);
-			return result;
+			//result.addError(return_msg);
+			jsonObject.put("success",false);
+			jsonObject.put("msg",return_msg);
+			return jsonObject;
+			//return result;
 		}
 		// 以下字段在return_code 和result_code都为SUCCESS的时候有返回
 
@@ -720,12 +832,15 @@ log.info(xmlResult);
 		packageParams.put("timestamp", System.currentTimeMillis() / 1000 + "");
 		String packageSign = PaymentKit.createSign(packageParams, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey());
 		packageParams.put("sign", packageSign);
-		orderService.addOrderBy("","","微信APP",openid,s,(int)(totalFee*100),params.get("body"),"","","APP",new Date(),"0","");
+		orderService.addOrderBy("","","10","",s,fee,params.get("body"),"","","APP",new Date(),"0",userid);
 		
-		String jsonStr = JSON.toJSONString(packageParams);
-log.info("最新返回apk的参数:"+jsonStr);
+		/*String jsonStr = JSON.toJSONString(packageParams);
+		log.info("最新返回apk的参数:"+jsonStr);
 		result.success(jsonStr);
-		return result;
+		return result;*/
+		jsonObject.put("success",true);
+		jsonObject.put("data",packageParams);
+		return jsonObject;
 	}
 	
 	
@@ -737,13 +852,13 @@ log.info("最新返回apk的参数:"+jsonStr);
 	 */
 	@RequestMapping(value = "/appRefund",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public AjaxResult orderRefund(@Param("total_fee")Double total_fee,@Param("refund_fee")Double refund_fee,@Param("transaction_id")String transaction_id,@Param("outTradeNo")String outTradeNo, HttpServletRequest request){
+	public JSONObject orderRefund(@Param("fee")Float fee, @Param("refund_fee")Float refund_fee, @Param("transaction_id")String transaction_id, @Param("outTradeNo")String outTradeNo, HttpServletRequest request){
 		System.out.println("----------------退款--------------------------");
 		String certPath=request.getServletContext().getRealPath("/")+"WEB-INF"+"\\apiclient_cert.p12";
 		String certPass=WxPayApiConfigKit.getWxPayApiConfig().getMchId();
 		System.out.println("证书路径："+certPath);
 		System.out.println("证书密码："+certPass);
-		WxPayApiConfigKit.getWxPayApiConfig().setContractNotifyUrl("http://qq784602719.imwork.net:43386/wxpay/refund_result");
+		WxPayApiConfigKit.getWxPayApiConfig().setContractNotifyUrl("http://nf20718343.iask.in:15161/wxpay/refund_result");
 		//调用证书
 		Map<String, String> params =new HashMap<>();	
 		params.put("appid", WxPayApiConfigKit.getWxPayApiConfig().getAppId());
@@ -753,16 +868,24 @@ log.info("最新返回apk的参数:"+jsonStr);
 		params.put("out_refund_no",s);//商户退款单号 -随机数
 		params.put("out_trade_no", outTradeNo);//商户订单号  二选一
 		params.put("transaction_id",transaction_id);//微信订单号 二选一
+		System.out.println(refund_fee);
+		System.out.println(fee);
+		System.out.println(transaction_id);
+		System.out.println(outTradeNo);
 		params.put("refund_fee",String.valueOf((int)(refund_fee*100)));
-		params.put("total_fee", String.valueOf((int)(total_fee*100)));
+		params.put("total_fee", String.valueOf((int)(fee*100)));
 		params.put("notify_url", WxPayApiConfigKit.getWxPayApiConfig().getContractNotifyUrl());
 		params.put("sign", PaymentKit.createSign(params, WxPayApiConfigKit.getWxPayApiConfig().getPaternerKey()));
+		orderService.modifyOrderById(outTradeNo,transaction_id,s,refund_fee,"2",new Date());
 		System.out.println("微信退款参数："+JSON.toJSONString(params));
 
 		
 	    String info= WxPayApi.orderRefund(false, params, certPath, certPass);
-		result.setData(info);
-		return result;
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success",true);
+		jsonObject.put("data",info);
+		//result.setData(info);
+		return jsonObject;
 	}
 	
 	
@@ -777,8 +900,6 @@ log.info("最新返回apk的参数:"+jsonStr);
 		System.out.println("----------------退款回调-----------------------");
 		String xmlMsg = HttpKit.readData(request);
 		System.out.println("支付通知="+xmlMsg);
-
-
 		Map<String, String> params = PaymentKit.xmlToMap(xmlMsg);
 		String appid  = params.get("appid");
 		//商户号
@@ -787,13 +908,11 @@ log.info("最新返回apk的参数:"+jsonStr);
 		String openId      = params.get("openid");
 		// 总金额
 		String total_fee     = params.get("total_fee");
-        Float refund_fee = Float.parseFloat(params.get("refund_fee"));
         // 微信支付订单号
 		String transaction_id      = params.get("transaction_id");
 		// 商户订单号
 		String out_trade_no      = params.get("out_trade_no");
 		String out_refund_no      = params.get("out_refund_no");
-		orderService.modifyOrderById(out_trade_no,transaction_id,out_refund_no,refund_fee,"2",new Date());
 		return notify_url;
 	}
 	
@@ -804,26 +923,77 @@ log.info("最新返回apk的参数:"+jsonStr);
 	 */
 	@RequestMapping(value = "/pay_result",method={RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
-	public String pay_notify(HttpServletRequest request) {
+	public void pay_notify(HttpServletRequest request,HttpServletResponse response) throws IOException {
 		// 支付结果通用通知文档: https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_7
         log.info("--------------支付回调！--------------------------");
-		String xmlMsg = HttpKit.readData(request);
+		System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+		InputStream inputStream ;
+		StringBuffer sb = new StringBuffer();
+		inputStream = request.getInputStream();
+		String s ;
+		BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+		while ((s = in.readLine()) != null){
+			sb.append(s);
+		}
+		in.close();
+		inputStream.close();
+		Map<String, String> m = new HashMap<String, String>();
+		try {
+			m = WXUtil.doXMLParse(sb.toString());
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		}
+		SortedMap<Object,Object> packageParams = new TreeMap<Object,Object>();
+		Iterator it = m.keySet().iterator();
+		while (it.hasNext()) {
+			String parameter = (String) it.next();
+			String parameterValue = m.get(parameter);
+			String v = "";
+			if(null != parameterValue) {
+				v = parameterValue.trim();
+			}
+			packageParams.put(parameter, v);
+			System.out.println("map文件之========================"+packageParams);
+		}
+			String resXml = "";
+			if("SUCCESS".equals((String)packageParams.get("result_code"))){
+				//得到返回的参数
+				String openid = (String)packageParams.get("openid");
+				String transaction_id = (String)packageParams.get("transaction_id");
+				String out_trade_no = (String)packageParams.get("out_trade_no");
+				String total_fee = (String)packageParams.get("total_fee");
+				System.out.println(total_fee+"+++++++++++++++++++++++++++");
+				Float fee = Float.parseFloat(total_fee)/100;
+				//业务处理
+				orderService.modifyOrderByNo(openid,out_trade_no,transaction_id,fee,new Date(),"1");
+
+				resXml = "<xml>" + "<return_code><![CDATA[SUCCESS]]></return_code>"
+						+ "<return_msg><![CDATA[OK]]></return_msg>" +"</xml> ";
+				BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+				out.write(resXml.getBytes());
+				out.flush();
+				out.close();
+			} else {
+				System.out.println("回调失败");
+			}
+		/*String xmlMsg = HttpKit.readData(request);
 		System.out.println("支付通知="+xmlMsg);
-		
-		
+
+
 	Map<String, String> params = PaymentKit.xmlToMap(xmlMsg);
 	String appid  = params.get("appid");
 	//商户号
 	String mch_id  = params.get("mch_id");
 	String result_code  = params.get("result_code");
-	String openId      = params.get("openid");
+	String openId   = params.get("openid");
 	//交易类型
-	String trade_type      = params.get("trade_type");
+	String trade_type  = params.get("trade_type");
 		//付款银行
-	String bank_type      = params.get("bank_type");
+	String bank_type   = params.get("bank_type");
 	// 总金额
-	String total_fee     = params.get("total_fee");
-        Float fee = Float.parseFloat(total_fee)/100;
+	String total_fee  = params.get("total_fee");
+		System.out.println(total_fee+"===================");
+	Float fee = (Float.parseFloat(total_fee))/100;
         //现金支付金额
 	String cash_fee     = params.get("cash_fee");
 	// 微信支付订单号
@@ -855,12 +1025,18 @@ log.info("最新返回apk的参数:"+jsonStr);
 			}
 		}
 
-		return xmlMsg;
+		return xmlMsg;*/
 	}
 
 	@RequestMapping(value = "/reqOrderquery",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
 	public Object reqOrderquery(@Param("openid") String openid,@Param("tradeState")String tradeState){
-		List<Order> orders = orderService.queryOrderByOpenid(openid,"1");
+		List<Order> orders;
+		if (tradeState==null){
+			orders = orderService.queryOrderByOpenidAll(openid);
+		}else {
+			orders = orderService.queryOrderByOpenid(openid, tradeState);
+		}
 		JSONArray json = new JSONArray();
 		for(Order order : orders){
 			JSONObject jo = new JSONObject();
@@ -869,6 +1045,38 @@ log.info("最新返回apk的参数:"+jsonStr);
 			jo.put("fee",order.getFee());
 			jo.put("tradeState",order.getTradeState());
 			jo.put("timeExpire",order.getTimeExpire());
+			jo.put("timeStart",order.getTimeStart());
+			jo.put("outRefundNo",order.getOutRefundNo());
+			jo.put("body",order.getTbody());
+			jo.put("refundSuccessTime",order.getRefundSuccessTime());
+			json.add(jo);
+		}
+		return json;
+	}
+
+
+
+	@RequestMapping(value = "/wxAppQuery",method = {RequestMethod.POST,RequestMethod.GET})
+	@ResponseBody
+	public Object wxAppQuery(@Param("userid") String userid,@Param("tradeState")String tradeState){
+		List<Order> orders;
+		if (tradeState==null){
+			orders = orderService.queryOrderByUserIdAll(userid,"10");
+		}else {
+			orders = orderService.queryOrderByUserId(userid,tradeState,"10");
+		}
+		JSONArray json = new JSONArray();
+		for(Order order : orders){
+			JSONObject jo = new JSONObject();
+			jo.put("outTradeNo", order.getOutTradeNo());
+			jo.put("transactionId",order.getTransactionId());
+			jo.put("fee",order.getFee());
+			jo.put("tradeState",order.getTradeState());
+			jo.put("timeExpire",order.getTimeExpire());
+			jo.put("timeStart",order.getTimeStart());
+			jo.put("outRefundNo",order.getOutRefundNo());
+			jo.put("body",order.getTbody());
+			jo.put("refundSuccessTime",order.getRefundSuccessTime());
 			json.add(jo);
 		}
 		return json;

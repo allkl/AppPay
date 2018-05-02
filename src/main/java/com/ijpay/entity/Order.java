@@ -34,7 +34,6 @@ public class Order {
     private String payType;//支付方式
     private String openid;//用户标识
     private String outTradeNo;//商户订单号
-    private Integer totalFee;//支付金额
     private String feeType;//货币类型
     private String tbody;//商品描述
     private String detail;//商品详情
@@ -92,14 +91,6 @@ public class Order {
 
     public void setOutTradeNo(String outTradeNo) {
         this.outTradeNo = outTradeNo;
-    }
-
-    public Integer getTotalFee() {
-        return totalFee;
-    }
-
-    public void setTotalFee(Integer totalFee) {
-        this.totalFee = totalFee;
     }
 
     public String getFeeType() {
@@ -230,7 +221,6 @@ public class Order {
                 ", payType='" + payType + '\'' +
                 ", openid='" + openid + '\'' +
                 ", outTradeNo='" + outTradeNo + '\'' +
-                ", totalFee=" + totalFee +
                 ", feeType='" + feeType + '\'' +
                 ", tbody='" + tbody + '\'' +
                 ", detail='" + detail + '\'' +

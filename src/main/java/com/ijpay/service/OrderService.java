@@ -18,7 +18,7 @@ public interface OrderService {
      * @param payType
      * @param openid
      * @param outTradeNo
-     * @param totalFee
+     * @param fee
      * @param tbody
      * @param detail
      * @param attach
@@ -27,7 +27,7 @@ public interface OrderService {
      * @param tradeState
      * @param userId
      */
-    void addOrderBy(@Param("orderid")String orderid, @Param("deviceInfo")String deviceInfo, @Param("payType")String payType, @Param("openid")String openid, @Param("outTradeNo")String outTradeNo, @Param("totalFee")Integer totalFee, @Param("tbody")String tbody, @Param("detail")String detail, @Param("attach")String attach, @Param("tradeType")String tradeType, @Param("timeStart")Date timeStart, @Param("tradeState")String tradeState, @Param("userId")String userId);
+    void addOrderBy(@Param("orderid")String orderid, @Param("deviceInfo")String deviceInfo, @Param("payType")String payType, @Param("openid")String openid, @Param("outTradeNo")String outTradeNo, @Param("fee")Float fee, @Param("tbody")String tbody, @Param("detail")String detail, @Param("attach")String attach, @Param("tradeType")String tradeType, @Param("timeStart")Date timeStart, @Param("tradeState")String tradeState, @Param("userId")String userId);
 
     /**
      * 支付完成后修改
@@ -37,7 +37,7 @@ public interface OrderService {
      * @param timeExpire
      * @param tradeState
      */
-    void modifyOrderByNo( @Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("fee") Float fee,@Param("timeExpire") Date timeExpire, @Param("tradeState") String tradeState);
+    void modifyOrderByNo( @Param("openid")String openid,@Param("outTradeNo") String outTradeNo, @Param("transactionId") String transactionId, @Param("fee") Float fee,@Param("timeExpire") Date timeExpire, @Param("tradeState") String tradeState);
 
 
 
@@ -58,11 +58,16 @@ public interface OrderService {
      */
     List<Order> queryOrderByOpenid(@Param("openid") String openid, @Param("tradeState") String tradeState);
 
+
+    List<Order> queryOrderByOpenidAll(String openid);
+
     /**
      * 通过id和支付状态查询相应的订单
      * @param userId
      * @param tradeState
      * @return
      */
-    List<Order> queryOrderByUserId(@Param("userId") String userId, @Param("tradeState") String tradeState);
+    List<Order> queryOrderByUserId(@Param("userId") String userId, @Param("tradeState") String tradeState,@Param("payType")String payType);
+
+    List<Order> queryOrderByUserIdAll(@Param("userId") String userId,@Param("payType")String payType);
 }
