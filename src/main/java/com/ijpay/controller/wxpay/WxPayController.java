@@ -905,14 +905,16 @@ log.info(xmlResult);
 		//商户号
 		String mch_id  = params.get("mch_id");
 		String result_code  = params.get("result_code");
-		String openId      = params.get("openid");
+		String openId = params.get("openid");
 		// 总金额
-		String total_fee     = params.get("total_fee");
+		String total_fee = params.get("total_fee");
         // 微信支付订单号
-		String transaction_id      = params.get("transaction_id");
+		String transaction_id = params.get("transaction_id");
 		// 商户订单号
-		String out_trade_no      = params.get("out_trade_no");
-		String out_refund_no      = params.get("out_refund_no");
+		String out_trade_no = params.get("out_trade_no");
+		String out_refund_no = params.get("out_refund_no");
+
+
 		return notify_url;
 	}
 	

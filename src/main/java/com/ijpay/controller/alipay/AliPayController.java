@@ -293,7 +293,7 @@ public class AliPayController extends AliPayApiController {
 			model.setTradeNo(tradeNo);//支付宝订单号
 			model.setRefundAmount(String.valueOf(refundAmount));
 			model.setRefundReason("正常退款");
-			orderService.modifyOrderById(outTradeNo,tradeNo, GetString.getRandomStringByLength(32),refundAmount,"2",new Date());
+			//orderService.modifyOrderById(outTradeNo,tradeNo, StringUtils.getUUID(),fee,"2",new Date());
 			return AliPayApi.tradeRefund(model);
 		} catch (AlipayApiException e) {
 			e.printStackTrace();
@@ -418,6 +418,7 @@ public class AliPayController extends AliPayApiController {
 	@RequestMapping(value = "/return_url")
 	@ResponseBody
 	public String return_url(HttpServletRequest request) {
+		System.err.println("主动回调+++++++++++++++++++++++++++++++++++");
 		try {
 			// 获取支付宝GET过来反馈信息
 			Map<String, String> map = AliPayApi.toMap(request);
@@ -456,6 +457,60 @@ public class AliPayController extends AliPayApiController {
 	@RequestMapping(value = "/notify_url")
 	@ResponseBody
 	public String  notify_url(HttpServletRequest request) {
+		System.out.println("++++++++++++++++++++++++++++异步回调");
+		try {
+			// 获取支付宝POST过来反馈信息
+			Map<String, String> params = AliPayApi.toMap(request);
+
+			for (Map.Entry<String, String> entry : params.entrySet()) {
+				System.out.println(entry.getKey() + " = " + entry.getValue());
+			}
+
+			boolean verify_result = AlipaySignature.rsaCheckV1(params, aliPayBean.getPublicKey(), "UTF-8","RSA2");
+			if (verify_result) {// 验证成功
+				// TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
+				String trade_status = params.get("trade_status");
+				if(trade_status.equals("TRADE_CLOSED")){
+					String trade_no = params.get("trade_no");
+					// 商户订单号
+					String out_trade_no = params.get("out_trade_no");
+					String trade_type = params.get("trade_type");
+					String refund_fee = params.get("refund_fee");
+					Float fee = Float.parseFloat(refund_fee);
+					String out_request_no = params.get("out_request_no");
+					orderService.modifyOrderById(out_trade_no,trade_no,StringUtils.getUUID(),fee,"2",new Date());
+					System.out.println("notify_url 验证成功succcess");
+					return "success";
+				} else if (trade_status.equals("TRADE_SUCCESS")){
+
+					String trade_no = params.get("trade_no");
+					// 商户订单号
+					String out_trade_no      = params.get("out_trade_no");
+					String trade_type      = params.get("trade_type");
+					String total_amount     = params.get("total_amount");
+					Float fee = Float.parseFloat(total_amount);
+					orderService.modifyOrderByNo("",out_trade_no,trade_no,fee,new Date(),"1");
+					System.out.println("notify_url 验证成功succcess");
+					return "success";
+				}else {
+					return "failure";
+				}
+
+			} else {
+				System.out.println("notify_url 验证失败");
+				// TODO
+				return "failure";
+			}
+		} catch (AlipayApiException e) {
+			e.printStackTrace();
+			return "failure";
+		}
+
+	}
+
+	@RequestMapping(value = "/refund_notify_url")
+	@ResponseBody
+	public String  refund_notify_url(HttpServletRequest request) {
 		try {
 			// 获取支付宝POST过来反馈信息
 			Map<String, String> params = AliPayApi.toMap(request);
@@ -473,9 +528,15 @@ public class AliPayController extends AliPayApiController {
 				// 商户订单号
 				String out_trade_no      = params.get("out_trade_no");
 				String trade_type      = params.get("trade_type");
-				String total_amount     = params.get("total_amount");
-				Float fee = Float.parseFloat(total_amount);
-				orderService.modifyOrderByNo("",out_trade_no,trade_no,fee,new Date(),"1");
+				String refund_amount     = params.get("refund_amount");
+				Float fee = Float.parseFloat(refund_amount);
+				String out_request_no = params.get("out_request_no");
+				System.out.println(out_trade_no);
+				System.out.println(refund_amount);
+				System.out.println(trade_no);
+				System.out.println(fee);
+				System.out.println(out_request_no);
+
 				System.out.println("notify_url 验证成功succcess");
 				return "success";
 			} else {
